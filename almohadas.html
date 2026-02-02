@@ -55,7 +55,6 @@
             margin: 10px;
         }
 
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -98,14 +97,12 @@
         Almohadas hoteleras premium. Venta por mayor y menor. Envíos a todo el país.
     </div>
 
-    <!-- Galería de imágenes -->
     <div class="galeria">
-        <img src="/static/IMG-20260130-WA0017.jpg" onclick="abrirModal(0)">
-        <img src="/static/IMG-20260130-WA0019.jpg" onclick="abrirModal(1)">
-        <img src="/static/IMG-20260130-WA0020.jpg" onclick="abrirModal(2)">
+        <img src="IMG-20260130-WA0019.jpg" onclick="abrirModal(0)">
+        <img src="IMG-20260130-WA0018.jpg" onclick="abrirModal(1)">
+        <img src="IMG-20260130-WA0020.jpg" onclick="abrirModal(2)">
     </div>
 
-    <!-- Modal -->
     <div class="modal" id="modal">
         <span class="close" onclick="cerrarModal()">&times;</span>
         <span class="prev" onclick="cambiar(-1)">&#10094;</span>
@@ -134,9 +131,9 @@
 
     <script>
         const fotos = [
-            "/static/IMG-20260130-WA0017.jpg",
-            "/static/IMG-20260130-WA0019.jpg",
-            "/static/IMG-20260130-WA0020.jpg"
+            "IMG-20260130-WA0019.jpg",
+            "IMG-20260130-WA0018.jpg",
+            "IMG-20260130-WA0020.jpg"
         ];
         let index = 0;
 
