@@ -12,7 +12,6 @@
             padding: 20px;
             text-align: center;
             color: #333;
-            /* Agregado para que el efecto de la galería no corte */
             overflow-x: hidden; 
         }
         h1 {
@@ -29,14 +28,21 @@
             display: flex;
             flex-wrap: nowrap; 
             overflow-x: auto;  
-            scroll-behavior: smooth; 
             -webkit-overflow-scrolling: touch; 
             justify-content: flex-start; 
-            gap: 15px; /* Aumentado un poco para el efecto */
+            gap: 15px; 
             margin-bottom: 30px;
-            padding: 20px 10px; /* Aumentado padding vertical para dar espacio al realce */
-            /* Crucial para centrar la imagen 'activa' */
+            padding: 20px 10px; 
             scroll-snap-type: x mandatory; 
+            /* Se quita 'scroll-behavior: smooth' general del contenedor porque rompía el truco del loop invisible */
+        }
+        /* Oculta la barra de scroll para un look más limpio */
+        .galeria::-webkit-scrollbar {
+            display: none;
+        }
+        .galeria {
+            -ms-overflow-style: none;  
+            scrollbar-width: none;  
         }
         .galeria img {
             width: 120px;
@@ -46,21 +52,16 @@
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
             flex-shrink: 0; 
-            transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease; /* Transición suave */
-            opacity: 0.6; /* Opacidad reducida para las laterales */
-            /* Asegura que la imagen se detenga en el centro */
+            transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease; 
+            opacity: 0.6; 
             scroll-snap-align: center; 
         }
-
-        /* --- NUEVO EFECTO SUPERPUESTO/REALZADO --- */
         .galeria img.activa {
-            transform: scale(1.2) translateY(-10px); /* Agranda y sube un poco */
-            opacity: 1; /* Opacidad total */
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4); /* Sombra más pronunciada */
-            z-index: 1; /* Asegura que esté sobre las otras */
+            transform: scale(1.2) translateY(-10px); 
+            opacity: 1; 
+            box-shadow: 0 8px 20px rgba(0,0,0,0.4); 
+            z-index: 1; 
         }
-        /* ------------------------------------------- */
-
         .info {
             max-width: 780px;
             margin: 0 auto 30px;
@@ -143,7 +144,6 @@
     Venta por menor y por mayor · Envíos a todo el país.
 </div>
 
-<!-- Agregado ID para el JS -->
 <div class="galeria" id="galeria-fotos">
     <img src="IMG-20260209-WA0013.jpg" onclick="abrirModal(0)">
     <img src="IMG-20260209-WA0015.jpg" onclick="abrirModal(1)">
@@ -152,7 +152,7 @@
     <img src="IMG-20260209-WA0010.jpg" onclick="abrirModal(4)">
     <img src="IMG-20260130-WA0001.jpg" onclick="abrirModal(5)">
     <img src="IMG-20260130-WA0026.jpg" onclick="abrirModal(6)">
-    <img src="IMG-20260130-WA0028.jpg" onclick="7)">
+    <img src="IMG-20260130-WA0028.jpg" onclick="abrirModal(7)">
     <img src="IMG-20260130-WA0002.jpg" onclick="abrirModal(8)">
 </div>
 
@@ -246,23 +246,46 @@
         document.getElementById('modal-img').src = fotos[index];
     }
 
-    // --- NUEVO SCRIPT PARA DESTACAR LA IMAGEN CENTRAL ---
+    // --- SCRIPT PARA EL CARRUSEL CON EFECTO INFINITO (LOOP) ---
     const galeria = document.getElementById('galeria-fotos');
-    const imagenesGaleria = galeria.querySelectorAll('img');
+    const itemsOriginales = Array.from(galeria.children);
+    
+    // Clonamos las fotos del principio y del final para crear la ilusión óptica del loop
+    itemsOriginales.forEach(item => {
+        const clonDespues = item.cloneNode(true);
+        galeria.appendChild(clonDespues);
+    });
+    
+    // Duplicamos hacia atrás también para que al deslizar a la izquierda haya loop inmediato
+    itemsOriginales.slice().reverse().forEach(item => {
+        const clonAntes = item.cloneNode(true);
+        galeria.insertBefore(clonAntes, galeria.firstChild);
+    });
+
+    const todasLasImagenes = galeria.querySelectorAll('img');
+    const totalOriginales = itemsOriginales.length;
+
+    // Posición inicial: nos paramos en la primera imagen del bloque central original
+    window.addEventListener('load', () => {
+        const anchoItem = itemsOriginales[0].offsetWidth + 15; // 15 es el gap
+        galeria.scrollLeft = anchoItem * totalOriginales;
+        actualizarImagenActiva();
+    });
+
+    let isResetting = false;
 
     function actualizarImagenActiva() {
-        // Obtenemos el centro horizontal del contenedor de la galería
+        if (isResetting) return;
+
         const centroGaleria = galeria.offsetWidth / 2 + galeria.scrollLeft;
+        const anchoItem = itemsOriginales[0].offsetWidth + 15;
         
         let imagenMasCercana = null;
         let distanciaMinima = Infinity;
 
-        // Buscamos la imagen cuyo centro esté más cerca del centro de la galería
-        imagenesGaleria.forEach((img, index) => {
+        todasLasImagenes.forEach((img) => {
             const centroImagen = img.offsetLeft + img.offsetWidth / 2;
             const distancia = Math.abs(centroGaleria - centroImagen);
-            
-            // Removemos la clase 'activa' de todas primero
             img.classList.remove('activa');
 
             if (distancia < distanciaMinima) {
@@ -271,18 +294,35 @@
             }
         });
 
-        // Añadimos la clase 'activa' a la imagen más central
         if (imagenMasCercana) {
             imagenMasCercana.classList.add('activa');
         }
+
+        // --- EL TRUCO DEL INFINITO ---
+        // Si el usuario llega al bloque duplicado del final o del principio, lo movemos en secreto
+        const margenLoop = anchoItem * totalOriginales;
+        
+        if (galeria.scrollLeft >= margenLoop * 2) {
+            isResetting = true;
+            galeria.style.scrollSnapType = 'none'; // Apagamos el snap un milisegundo
+            galeria.scrollLeft = margenLoop;
+            galeria.style.scrollSnapType = 'x mandatory';
+            isResetting = false;
+        } else if (galeria.scrollLeft <= 0) {
+            isResetting = true;
+            galeria.style.scrollSnapType = 'none';
+            galeria.scrollLeft = margenLoop;
+            galeria.style.scrollSnapType = 'x mandatory';
+            isResetting = false;
+        }
     }
 
-    // Ejecutamos la función al hacer scroll y al cargar la página
     galeria.addEventListener('scroll', actualizarImagenActiva);
-    window.addEventListener('load', actualizarImagenActiva); // Para que la primera esté activa al inicio
-    // También útil si cambias el tamaño de la ventana
-    window.addEventListener('resize', actualizarImagenActiva); 
-
+    window.addEventListener('resize', () => {
+        const anchoItem = itemsOriginales[0].offsetWidth + 15;
+        galeria.scrollLeft = anchoItem * totalOriginales;
+        actualizarImagenActiva();
+    });
 </script>
 
 </body>
