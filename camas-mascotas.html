@@ -33,9 +33,8 @@
             gap: 15px; 
             margin-bottom: 30px;
             padding: 20px 10px; 
-            scroll-snap-type: x mandatory; 
+            scroll-snap-type: x mandatory;
         }
-        /* Oculta la barra de scroll para un look más limpio */
         .galeria::-webkit-scrollbar {
             display: none;
         }
@@ -245,34 +244,53 @@
         document.getElementById('modal-img').src = fotos[index];
     }
 
-    // --- NUEVO SCRIPT ACTUALIZADO PARA BUCLE / LOOP INFINITO REAL ---
+    // --- NUEVO SISTEMA SEGURO DE LOOP INFINITO ---
     const galeria = document.getElementById('galeria-fotos');
+    const originales = Array.from(galeria.children);
+    const totalOriginales = originales.length;
 
-    function manejarLoop() {
-        const anchoItem = galeria.firstElementChild.offsetWidth + 15; // Ancho + gap
-        
-        // Si el scroll avanza hacia la derecha y pasa una imagen entera
-        if (galeria.scrollLeft >= anchoItem) {
-            galeria.appendChild(galeria.firstElementChild); // Mueve la primera al final
-            galeria.scrollLeft -= anchoItem; // Compensa el scroll al instante
-        }
-        // Si el scroll va a la izquierda del todo
-        else if (galeria.scrollLeft <= 0) {
-            galeria.insertBefore(galeria.lastElementChild, galeria.firstElementChild); // Mueve la última al inicio
-            galeria.scrollLeft += anchoItem; // Compensa el scroll al instante
-        }
-
-        actualizarImagenActiva();
+    // Clonamos el set completo 2 veces (al inicio y al final) para garantizar que en tablets/PC nunca se vea el corte vacío
+    for (let i = 0; i < 2; i++) {
+        originales.forEach(img => galeria.appendChild(img.cloneNode(true)));
     }
+    originales.slice().reverse().forEach(img => galeria.insertBefore(img.cloneNode(true), galeria.firstChild));
+
+    const todasLasImgs = galeria.querySelectorAll('img');
+    const anchoItem = originales[0].offsetWidth + 15; 
+    const tamañoSetOriginal = anchoItem * totalOriginales;
+
+    // Posición inicial segura al medio
+    window.addEventListener('load', () => {
+        galeria.scrollLeft = tamañoSetOriginal;
+        actualizarImagenActiva();
+    });
+
+    let timeoutScroll;
+    galeria.addEventListener('scroll', () => {
+        // Ejecución inmediata de la clase activa para que no tenga lag visual
+        actualizarImagenActiva();
+
+        // Manejo del loop sin cortar el movimiento del dedo (debounced para evitar el bug)
+        clearTimeout(timeoutScroll);
+        timeoutScroll = setTimeout(() => {
+            if (galeria.scrollLeft >= tamañoSetOriginal * 2) {
+                galeria.style.scrollSnapType = 'none';
+                galeria.scrollLeft = tamañoSetOriginal;
+                galeria.style.scrollSnapType = 'x mandatory';
+            } else if (galeria.scrollLeft <= anchoItem) {
+                galeria.style.scrollSnapType = 'none';
+                galeria.scrollLeft = tamañoSetOriginal + anchoItem;
+                galeria.style.scrollSnapType = 'x mandatory';
+            }
+        }, 50); 
+    });
 
     function actualizarImagenActiva() {
         const centroGaleria = galeria.offsetWidth / 2 + galeria.scrollLeft;
-        const imagenes = galeria.querySelectorAll('img');
-        
         let imagenMasCercana = null;
         let distanciaMinima = Infinity;
 
-        imagenes.forEach((img) => {
+        todasLasImgs.forEach((img) => {
             const centroImagen = img.offsetLeft + img.offsetWidth / 2;
             const distancia = Math.abs(centroGaleria - centroImagen);
             img.classList.remove('activa');
@@ -288,16 +306,10 @@
         }
     }
 
-    // Inicialización al cargar la página
-    window.addEventListener('load', () => {
-        // Ponemos el scroll un poquito avanzado al inicio para dejar margen a la izquierda
-        const anchoItem = galeria.firstElementChild.offsetWidth + 15;
-        galeria.scrollLeft = anchoItem;
+    window.addEventListener('resize', () => {
+        galeria.scrollLeft = tamañoSetOriginal;
         actualizarImagenActiva();
     });
-
-    galeria.addEventListener('scroll', manejarLoop);
-    window.addEventListener('resize', actualizarImagenActiva);
 </script>
 
 </body>
