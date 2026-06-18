@@ -34,7 +34,6 @@
             margin-bottom: 30px;
             padding: 20px 10px; 
             scroll-snap-type: x mandatory; 
-            /* Se quita 'scroll-behavior: smooth' general del contenedor porque rompía el truco del loop invisible */
         }
         /* Oculta la barra de scroll para un look más limpio */
         .galeria::-webkit-scrollbar {
@@ -246,44 +245,34 @@
         document.getElementById('modal-img').src = fotos[index];
     }
 
-    // --- SCRIPT PARA EL CARRUSEL CON EFECTO INFINITO (LOOP) ---
+    // --- NUEVO SCRIPT ACTUALIZADO PARA BUCLE / LOOP INFINITO REAL ---
     const galeria = document.getElementById('galeria-fotos');
-    const itemsOriginales = Array.from(galeria.children);
-    
-    // Clonamos las fotos del principio y del final para crear la ilusión óptica del loop
-    itemsOriginales.forEach(item => {
-        const clonDespues = item.cloneNode(true);
-        galeria.appendChild(clonDespues);
-    });
-    
-    // Duplicamos hacia atrás también para que al deslizar a la izquierda haya loop inmediato
-    itemsOriginales.slice().reverse().forEach(item => {
-        const clonAntes = item.cloneNode(true);
-        galeria.insertBefore(clonAntes, galeria.firstChild);
-    });
 
-    const todasLasImagenes = galeria.querySelectorAll('img');
-    const totalOriginales = itemsOriginales.length;
+    function manejarLoop() {
+        const anchoItem = galeria.firstElementChild.offsetWidth + 15; // Ancho + gap
+        
+        // Si el scroll avanza hacia la derecha y pasa una imagen entera
+        if (galeria.scrollLeft >= anchoItem) {
+            galeria.appendChild(galeria.firstElementChild); // Mueve la primera al final
+            galeria.scrollLeft -= anchoItem; // Compensa el scroll al instante
+        }
+        // Si el scroll va a la izquierda del todo
+        else if (galeria.scrollLeft <= 0) {
+            galeria.insertBefore(galeria.lastElementChild, galeria.firstElementChild); // Mueve la última al inicio
+            galeria.scrollLeft += anchoItem; // Compensa el scroll al instante
+        }
 
-    // Posición inicial: nos paramos en la primera imagen del bloque central original
-    window.addEventListener('load', () => {
-        const anchoItem = itemsOriginales[0].offsetWidth + 15; // 15 es el gap
-        galeria.scrollLeft = anchoItem * totalOriginales;
         actualizarImagenActiva();
-    });
-
-    let isResetting = false;
+    }
 
     function actualizarImagenActiva() {
-        if (isResetting) return;
-
         const centroGaleria = galeria.offsetWidth / 2 + galeria.scrollLeft;
-        const anchoItem = itemsOriginales[0].offsetWidth + 15;
+        const imagenes = galeria.querySelectorAll('img');
         
         let imagenMasCercana = null;
         let distanciaMinima = Infinity;
 
-        todasLasImagenes.forEach((img) => {
+        imagenes.forEach((img) => {
             const centroImagen = img.offsetLeft + img.offsetWidth / 2;
             const distancia = Math.abs(centroGaleria - centroImagen);
             img.classList.remove('activa');
@@ -297,32 +286,18 @@
         if (imagenMasCercana) {
             imagenMasCercana.classList.add('activa');
         }
-
-        // --- EL TRUCO DEL INFINITO ---
-        // Si el usuario llega al bloque duplicado del final o del principio, lo movemos en secreto
-        const margenLoop = anchoItem * totalOriginales;
-        
-        if (galeria.scrollLeft >= margenLoop * 2) {
-            isResetting = true;
-            galeria.style.scrollSnapType = 'none'; // Apagamos el snap un milisegundo
-            galeria.scrollLeft = margenLoop;
-            galeria.style.scrollSnapType = 'x mandatory';
-            isResetting = false;
-        } else if (galeria.scrollLeft <= 0) {
-            isResetting = true;
-            galeria.style.scrollSnapType = 'none';
-            galeria.scrollLeft = margenLoop;
-            galeria.style.scrollSnapType = 'x mandatory';
-            isResetting = false;
-        }
     }
 
-    galeria.addEventListener('scroll', actualizarImagenActiva);
-    window.addEventListener('resize', () => {
-        const anchoItem = itemsOriginales[0].offsetWidth + 15;
-        galeria.scrollLeft = anchoItem * totalOriginales;
+    // Inicialización al cargar la página
+    window.addEventListener('load', () => {
+        // Ponemos el scroll un poquito avanzado al inicio para dejar margen a la izquierda
+        const anchoItem = galeria.firstElementChild.offsetWidth + 15;
+        galeria.scrollLeft = anchoItem;
         actualizarImagenActiva();
     });
+
+    galeria.addEventListener('scroll', manejarLoop);
+    window.addEventListener('resize', actualizarImagenActiva);
 </script>
 
 </body>
