@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <title>Camas para Mascotas - Valtor Oficial</title>
+    <title>Puff - Valtor Oficial</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
@@ -23,6 +23,52 @@
             font-size: 1.1em;
             line-height: 1.6;
         }
+        
+        /* --- MEJORA: Galería principal en formato carrusel deslizable --- */
+        .galeria-principal {
+            display: flex;
+            flex-wrap: nowrap; /* Evita que las imágenes se vayan para abajo */
+            overflow-x: auto;  /* Permite deslizar hacia el costado */
+            scroll-snap-type: x mandatory; /* Hace que el deslizamiento sea suave y encaje bien */
+            -webkit-overflow-scrolling: touch; /* Suavidad nativa en dispositivos iOS */
+            gap: 15px;
+            padding: 10px 20px 20px;
+            margin-bottom: 30px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
+        /* Ocultar la barra de scroll fea en navegadores y hacerla minimalista */
+        .galeria-principal::-webkit-scrollbar {
+            height: 6px;
+        }
+        .galeria-principal::-webkit-scrollbar-thumb {
+            background: #ccc;
+            border-radius: 10px;
+        }
+        .galeria-principal::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .galeria-principal img {
+            flex: 0 0 auto; /* Evita que las imágenes se achiquen */
+            width: 150px;   /* Tamaño un poco más profesional */
+            height: 150px;
+            object-fit: cover;
+            border-radius: 14px;
+            cursor: pointer;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+            scroll-snap-align: start;
+            transition: transform 0.2s ease;
+        }
+
+        .galeria-principal img:hover {
+            transform: scale(1.03); /* Pequeño efecto visual al pasar el cursor */
+        }
+        /* -------------------------------------------------------------- */
+
+        /* Las galerías internas de la info se mantienen normales */
         .galeria {
             display: flex;
             flex-wrap: wrap;
@@ -52,13 +98,6 @@
             margin-top: 25px;
             color: #111;
         }
-        .modelo-img {
-            width: 100%;
-            max-width: 350px;
-            border-radius: 12px;
-            margin: 15px 0;
-            display: block;
-        }
         .btn-volver {
             display: inline-block;
             padding: 12px 28px;
@@ -70,7 +109,6 @@
             margin: 10px;
         }
 
-        /* Modal */
         .modal {
             display: none;
             position: fixed;
@@ -100,12 +138,7 @@
             border-radius: 50%;
             user-select: none;
         }
-        .close {
-            top: 10%;
-            right: 5%;
-            font-size: 2.5em;
-            transform: none;
-        }
+        .close { top: 10%; right: 5%; font-size: 2.5em; transform: none; }
         .prev { left: 2%; }
         .next { right: 2%; }
     </style>
@@ -113,95 +146,110 @@
 
 <body>
 
-<h1>Camas para Mascotas</h1>
+<h1>Puff Valtor</h1>
 
 <div class="descripcion">
-    Camas de alta resistencia para todo tipo de mascotas.<br>
-    Venta por menor y por mayor · Envíos a todo el país.
+    Puff para eventos, cumpleaños y hogar.<br>
+    Venta por menor y por mayor.
 </div>
 
-<div class="galeria">
-    <img src="IMG-20260209-WA0013.jpg" onclick="abrirModal(0)">
-    <img src="IMG-20260209-WA0015.jpg" onclick="abrirModal(1)">
-    <img src="IMG-20260209-WA0012.jpg" onclick="abrirModal(2)">
-    <img src="IMG-20260209-WA0011.jpg" onclick="abrirModal(3)">
-    <img src="IMG-20260209-WA0010.jpg" onclick="abrirModal(4)">
-    <img src="IMG-20260130-WA0001.jpg" onclick="abrirModal(5)">
-    <img src="IMG-20260130-WA0026.jpg" onclick="abrirModal(6)">
-    <img src="IMG-20260130-WA0028.jpg" onclick="abrirModal(7)">
-    <img src="IMG-20260130-WA0002.jpg" onclick="abrirModal(8)">
+<!-- Se cambió la clase a "galeria-principal" para aplicar el diseño deslizable -->
+<div class="galeria-principal">
+    <img src="IMG-20260129-WA0006.jpg" onclick="abrirModal(0)">
+    <img src="IMG-20260129-WA0007.jpg" onclick="abrirModal(1)">
+    <img src="IMG-20260129-WA0008.jpg" onclick="abrirModal(2)">
+    <img src="IMG-20260130-WA0036.jpg" onclick="abrirModal(3)">
+    <img src="IMG-20260201-WA0008.jpg" onclick="abrirModal(4)">
+    <img src="IMG-20260201-WA0011.jpg" onclick="abrirModal(5)">
+    <img src="puff.jpg" onclick="abrirModal(6)">
 </div>
 
 <div class="modal" id="modal">
-    <span class="close" onclick="cerrarModal()">&times;</span>
+    <span class="close" onclick="cerrarModal()">×</span>
     <span class="prev" onclick="cambiar(-1)">&#10094;</span>
     <img id="modal-img" src="">
     <span class="next" onclick="cambiar(1)">&#10095;</span>
 </div>
 
 <div class="info">
-    <h3>Cama tipo sillón CON respaldo</h3>
+    <h3>Puff – Alquiler para eventos y cumpleaños</h3>
     <p>
-        • Tela anti-desgarro<br>
-        • Patas de aluminio<br>
-        • Placa de alta densidad<br>
-        • Mayor comodidad y soporte<br>
-        • Colores a elección
+        • Tela ecocuero reforzado<br>
+        • Ideal para eventos y cumpleaños
     </p>
     <p>
-        • Medida 120 × 60 cm <br>
-        • Medida 80 × 50 cm 
+        • Combo 1: 10 puff + 1 mesa <br>
+        • Combo 2: 10 puff + 2 mesas <br>
+        • Combo 3: 8 puff + 2 mesas + 1 butacón <br>
+        • Consultar por mayor cantidad
     </p>
-    <img src="IMG-20260209-WA0015.jpg" class="modelo-img">
 
-    <h3>Cama tipo sillón SIN respaldo</h3>
-    <p>
-        • Tela anti-desgarro<br>
-        • Patas de aluminio<br>
-        • Placa de alta densidad<br>
-        • Diseño tipo sillón<br>
-        • Colores a elección
-    </p>
-    <p>
-        • Medida 120 × 60 cm <br>
-        • Medida 80 × 50 cm 
-    </p>
-    <img src="IMG-20260209-WA0011.jpg" class="modelo-img">
+    <div class="galeria">
+        <img src="puff.jpg">
+        <img src="IMG-20260129-WA0006.jpg">
+    </div>
 
-    <h3>Cama tipo colchoneta</h3>
+    <h3>Puff para tu hogar</h3>
     <p>
-        • Tela anti-desgarro<br>
-        • Rellena de vellón siliconado<br>
-        • Diseño flexible y cómodo<br>
-        • Ideal para uso diario
+        • Tela de ecocuero<br>
+        • Colores a elección<br>
+        • Puff: 40 × 40 cm<br>
+        • Mesa: 95 cm largo × 45 cm ancho
     </p>
     <p>
-        • Medida 50 × 55 cm <br>
-        • Medida 70 × 50 cm <br>
-        • Medida 120 × 60 cm
+        • Combo: 4 puff + 1 mesa 
     </p>
-    <img src="IMG-20260130-WA0026.jpg" class="modelo-img">
+
+    <div class="galeria">
+        <img src="IMG-20260130-WA0036.jpg">
+        <img src="IMG-20260201-WA0008.jpg">
+    </div>
+
+    <h3>Puff premium</h3>
+    <p>
+        • Tela de pana antidesgarro / antimanchas<br>
+        • Patas de metal<br>
+        • Puff 40 × 40 cm
+    </p>
+    <p>
+        • Precio por unidad 
+    </p>
+
+    <div class="galeria">
+        <img src="IMG-20260129-WA0007.jpg">
+        <img src="IMG-20260129-WA0008.jpg">
+    </div>
+
+    <h3>Venta – Combos</h3>
+    <p>
+        • 10 puff + 1 mesa<br>
+        • 10 puff + 2 mesas <br>
+        • Reforzados, ideales para alquiler
+    </p>
+
+    <div class="galeria">
+        <img src="IMG-20260201-WA0011.jpg">
+        <img src="puff.jpg">
+    </div>
 
     <p>
-        Venta por menor y por mayor<br>
         Envíos a todo el país<br>
+        Venta por mayor y menor<br>
         Efectivo · Transferencia · Mercado Pago
     </p>
 </div>
 
-<a class="btn-volver" href="/ValtorOFC/">← Volver al catálogo</a>
+<a class="btn-volver" href="index.html">← Volver al catálogo</a>
 
 <script>
     const fotos = [
-        "IMG-20260209-WA0013.jpg",
-        "IMG-20260209-WA0015.jpg",
-        "IMG-20260209-WA0012.jpg",
-        "IMG-20260209-WA0011.jpg",
-        "IMG-20260209-WA0010.jpg",
-        "IMG-20260130-WA0001.jpg",
-        "IMG-20260130-WA0026.jpg",
-        "IMG-20260130-WA0028.jpg",
-        "IMG-20260130-WA0002.jpg"
+        "IMG-20260129-WA0006.jpg",
+        "IMG-20260129-WA0007.jpg",
+        "IMG-20260129-WA0008.jpg",
+        "IMG-20260130-WA0036.jpg",
+        "IMG-20260201-WA0008.jpg",
+        "IMG-20260201-WA0011.jpg",
+        "puff.jpg"
     ];
     let index = 0;
 
