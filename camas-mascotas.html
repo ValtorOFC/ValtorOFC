@@ -33,7 +33,7 @@
             gap: 15px; 
             margin-bottom: 30px;
             padding: 20px 10px; 
-            scroll-snap-type: x mandatory;
+            /* SE QUITÓ EL SNAP DE ACÁ PARA EVITAR QUE SE MUEVAN SOLAS */
         }
         .galeria::-webkit-scrollbar {
             display: none;
@@ -52,7 +52,6 @@
             flex-shrink: 0; 
             transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 0.3s ease; 
             opacity: 0.6; 
-            scroll-snap-align: center; 
         }
         .galeria img.activa {
             transform: scale(1.2) translateY(-10px); 
@@ -244,12 +243,12 @@
         document.getElementById('modal-img').src = fotos[index];
     }
 
-    // --- NUEVO SISTEMA SEGURO DE LOOP INFINITO ---
+    // --- NUEVO SISTEMA SEGURO Y SUAVE SIN TIRONES ---
     const galeria = document.getElementById('galeria-fotos');
     const originales = Array.from(galeria.children);
     const totalOriginales = originales.length;
 
-    // Clonamos el set completo 2 veces (al inicio y al final) para garantizar que en tablets/PC nunca se vea el corte vacío
+    // Clonamos dos sets enteros para dar el margen infinito en pantallas gigantes de tablets/PC
     for (let i = 0; i < 2; i++) {
         originales.forEach(img => galeria.appendChild(img.cloneNode(true)));
     }
@@ -259,30 +258,21 @@
     const anchoItem = originales[0].offsetWidth + 15; 
     const tamañoSetOriginal = anchoItem * totalOriginales;
 
-    // Posición inicial segura al medio
+    // Arranca directo en la zona central segura
     window.addEventListener('load', () => {
         galeria.scrollLeft = tamañoSetOriginal;
         actualizarImagenActiva();
     });
 
-    let timeoutScroll;
+    // Control del loop instantáneo al mover el dedo sin trabas
     galeria.addEventListener('scroll', () => {
-        // Ejecución inmediata de la clase activa para que no tenga lag visual
         actualizarImagenActiva();
 
-        // Manejo del loop sin cortar el movimiento del dedo (debounced para evitar el bug)
-        clearTimeout(timeoutScroll);
-        timeoutScroll = setTimeout(() => {
-            if (galeria.scrollLeft >= tamañoSetOriginal * 2) {
-                galeria.style.scrollSnapType = 'none';
-                galeria.scrollLeft = tamañoSetOriginal;
-                galeria.style.scrollSnapType = 'x mandatory';
-            } else if (galeria.scrollLeft <= anchoItem) {
-                galeria.style.scrollSnapType = 'none';
-                galeria.scrollLeft = tamañoSetOriginal + anchoItem;
-                galeria.style.scrollSnapType = 'x mandatory';
-            }
-        }, 50); 
+        if (galeria.scrollLeft >= tamañoSetOriginal * 2) {
+            galeria.scrollLeft -= tamañoSetOriginal; // Resta la distancia sin romper el flujo
+        } else if (galeria.scrollLeft <= anchoItem) {
+            galeria.scrollLeft += tamañoSetOriginal; // Suma la distancia sin romper el flujo
+        }
     });
 
     function actualizarImagenActiva() {
@@ -304,7 +294,25 @@
         if (imagenMasCercana) {
             imagenMasCercana.classList.add('activa');
         }
+        return imagenMasCercana;
     }
+
+    // Auto-centra suavemente la foto al soltar el scroll (reemplaza al snap problemático)
+    let scrollTimeout;
+    galeria.addEventListener('scroll', () => {
+        clearTimeout(scrollTimeout);
+        scrollTimeout = setTimeout(() => {
+            const activa = actualizarImagenActiva();
+            if (activa) {
+                const centroGaleria = galeria.offsetWidth / 2;
+                const centroImagen = activa.offsetLeft + activa.offsetWidth / 2;
+                galeria.scrollTo({
+                    left: centroImagen - centroGaleria,
+                    behavior: 'smooth'
+                });
+            }
+        }, 150); 
+    });
 
     window.addEventListener('resize', () => {
         galeria.scrollLeft = tamañoSetOriginal;
