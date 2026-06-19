@@ -33,7 +33,6 @@
             gap: 15px; 
             margin-bottom: 30px;
             padding: 20px 10px; 
-            /* SE QUITÓ EL SNAP DE ACÁ PARA EVITAR QUE SE MUEVAN SOLAS */
         }
         .galeria::-webkit-scrollbar {
             display: none;
@@ -142,15 +141,19 @@
 </div>
 
 <div class="galeria" id="galeria-fotos">
-    <img src="IMG-20260209-WA0013.jpg" onclick="abrirModal(0)">
-    <img src="IMG-20260209-WA0015.jpg" onclick="abrirModal(1)">
-    <img src="IMG-20260209-WA0012.jpg" onclick="abrirModal(2)">
-    <img src="IMG-20260209-WA0011.jpg" onclick="abrirModal(3)">
-    <img src="IMG-20260209-WA0010.jpg" onclick="abrirModal(4)">
-    <img src="IMG-20260130-WA0001.jpg" onclick="abrirModal(5)">
-    <img src="IMG-20260130-WA0026.jpg" onclick="abrirModal(6)">
-    <img src="IMG-20260130-WA0028.jpg" onclick="abrirModal(7)">
-    <img src="IMG-20260130-WA0002.jpg" onclick="abrirModal(8)">
+    <img src="Cama perro 1.jpg" onclick="abrirModal(0)">
+    <img src="Cama perro 2.jpg" onclick="abrirModal(1)">
+    <img src="Cama perro 3.jpg" onclick="abrirModal(2)">
+    <img src="Colores de camas perro pana.jpg" onclick="abrirModal(3)">
+    <img src="Cama perro 4.jpg" onclick="abrirModal(4)">
+    <img src="Colores de camas perro chenille Venecia.jpg" onclick="abrirModal(5)">
+    <img src="Cama perro 5.jpg" onclick="abrirModal(6)">
+    <img src="Cama perro 6.jpg" onclick="abrirModal(7)">
+    <img src="Cama perro 7.jpg" onclick="abrirModal(8)">
+    <img src="Cama perro 8.jpg" onclick="abrirModal(9)">
+    <img src="Cama perro 9.jpg" onclick="abrirModal(10)">
+    <img src="Cama perro 10.jpg" onclick="abrirModal(11)">
+    <img src="Cama perro 11.jpg" onclick="abrirModal(12)">
 </div>
 
 <div class="modal" id="modal">
@@ -214,15 +217,19 @@
 
 <script>
     const fotos = [
-        "IMG-20260209-WA0013.jpg",
-        "IMG-20260209-WA0015.jpg",
-        "IMG-20260209-WA0012.jpg",
-        "IMG-20260209-WA0011.jpg",
-        "IMG-20260209-WA0010.jpg",
-        "IMG-20260130-WA0001.jpg",
-        "IMG-20260130-WA0026.jpg",
-        "IMG-20260130-WA0028.jpg",
-        "IMG-20260130-WA0002.jpg"
+        "Cama perro 1.jpg",
+        "Cama perro 2.jpg",
+        "Cama perro 3.jpg",
+        "Colores de camas perro pana.jpg",
+        "Cama perro 4.jpg",
+        "Colores de camas perro chenille Venecia.jpg",
+        "Cama perro 5.jpg",
+        "Cama perro 6.jpg",
+        "Cama perro 7.jpg",
+        "Cama perro 8.jpg",
+        "Cama perro 9.jpg",
+        "Cama perro 10.jpg",
+        "Cama perro 11.jpg"
     ];
     let index = 0;
 
@@ -243,12 +250,11 @@
         document.getElementById('modal-img').src = fotos[index];
     }
 
-    // --- NUEVO SISTEMA SEGURO Y SUAVE SIN TIRONES ---
+    // --- SISTEMA SEGURO Y SUAVE SIN TIRONES ---
     const galeria = document.getElementById('galeria-fotos');
     const originales = Array.from(galeria.children);
     const totalOriginales = originales.length;
 
-    // Clonamos dos sets enteros para dar el margen infinito en pantallas gigantes de tablets/PC
     for (let i = 0; i < 2; i++) {
         originales.forEach(img => galeria.appendChild(img.cloneNode(true)));
     }
@@ -258,20 +264,18 @@
     const anchoItem = originales[0].offsetWidth + 15; 
     const tamañoSetOriginal = anchoItem * totalOriginales;
 
-    // Arranca directo en la zona central segura
     window.addEventListener('load', () => {
         galeria.scrollLeft = tamañoSetOriginal;
         actualizarImagenActiva();
     });
 
-    // Control del loop instantáneo al mover el dedo sin trabas
     galeria.addEventListener('scroll', () => {
         actualizarImagenActiva();
 
         if (galeria.scrollLeft >= tamañoSetOriginal * 2) {
-            galeria.scrollLeft -= tamañoSetOriginal; // Resta la distancia sin romper el flujo
+            galeria.scrollLeft -= tamañoSetOriginal; 
         } else if (galeria.scrollLeft <= anchoItem) {
-            galeria.scrollLeft += tamañoSetOriginal; // Suma la distancia sin romper el flujo
+            galeria.scrollLeft += tamañoSetOriginal; 
         }
     });
 
@@ -297,7 +301,6 @@
         return imagenMasCercana;
     }
 
-    // Auto-centra suavemente la foto al soltar el scroll (reemplaza al snap problemático)
     let scrollTimeout;
     galeria.addEventListener('scroll', () => {
         clearTimeout(scrollTimeout);
