@@ -79,6 +79,21 @@
             margin: 15px 0;
             display: block;
         }
+        /* Contenedor para cuando hay dos imágenes juntas */
+        .imagenes-grupo {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .video-contenedor {
+            width: 100%;
+            max-width: 450px;
+            margin: 20px 0;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            display: block;
+        }
         .btn-volver {
             display: inline-block;
             padding: 12px 28px;
@@ -176,7 +191,15 @@
         • Medida 120 × 60 cm <br>
         • Medida 80 × 50 cm 
     </p>
-    <img src="IMG-20260209-WA0015.jpg" class="modelo-img">
+    <div class="imagenes-grupo">
+        <img src="Cama perro 5.jpg" class="modelo-img">
+        <img src="Cama perro 6.jpg" class="modelo-img">
+    </div>
+    
+    <video class="video-contenedor" controls>
+        <source src="VideoCamaPerro.mp4" type="video/mp4">
+        Tu navegador no soporta la reproducción de video.
+    </video>
 
     <h3>Cama tipo sillón SIN respaldo</h3>
     <p>
@@ -190,7 +213,7 @@
         • Medida 120 × 60 cm <br>
         • Medida 80 × 50 cm 
     </p>
-    <img src="IMG-20260209-WA0011.jpg" class="modelo-img">
+    <img src="Cama perro 11.jpg" class="modelo-img">
 
     <h3>Cama tipo colchoneta</h3>
     <p>
@@ -204,7 +227,10 @@
         • Medida 70 × 50 cm <br>
         • Medida 120 × 60 cm
     </p>
-    <img src="Cama perro 1.jpg" class="modelo-img">
+    <div class="imagenes-grupo">
+        <img src="Cama perro 1.jpg" class="modelo-img">
+        <img src="Cama perro 10.jpg" class="modelo-img">
+    </div>
 
     <p>
         Venta por menor y por mayor<br>
