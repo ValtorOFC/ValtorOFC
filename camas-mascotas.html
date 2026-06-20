@@ -72,19 +72,27 @@
             margin-top: 25px;
             color: #111;
         }
+        
+        /* Contenedor tipo grilla: 2 columnas perfectas una al lado de la otra */
+        .imagenes-grupo {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin: 15px 0;
+            max-width: 500px; /* Limita el ancho máximo para que no se estiren de más */
+        }
+        
+        /* Estilo uniforme para todas las fotos de los modelos */
         .modelo-img {
             width: 100%;
-            max-width: 350px;
-            border-radius: 12px;
-            margin: 15px 0;
+            height: auto;
+            aspect-ratio: 1 / 1; /* Las hace perfectamente cuadradas como en tu captura */
+            object-fit: cover;
+            border-radius: 18px; /* Bordes redondeados más suaves */
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15); /* Sombrita suave abajo */
             display: block;
         }
-        /* Contenedor para cuando hay dos imágenes juntas */
-        .imagenes-grupo {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
+
         .video-contenedor {
             width: 100%;
             max-width: 450px;
@@ -213,7 +221,9 @@
         • Medida 120 × 60 cm <br>
         • Medida 80 × 50 cm 
     </p>
-    <img src="Cama perro 11.jpg" class="modelo-img">
+    <div class="imagenes-grupo">
+        <img src="Cama perro 11.jpg" class="modelo-img" style="grid-column: span 2; max-width: 244px;">
+    </div>
 
     <h3>Cama tipo colchoneta</h3>
     <p>
