@@ -151,54 +151,6 @@
         }
         .prev { left: 2%; }
         .next { right: 2%; }
-
-        /* --- NUEVO ESTILO FORMULARIO DE PEDIDO --- */
-        .formulario-pedido {
-            background: #f1f3f5;
-            padding: 20px;
-            border-radius: 12px;
-            margin-top: 25px;
-            border: 1px solid #e2e8f0;
-        }
-        .formulario-pedido h4 {
-            margin: 0 0 15px 0;
-            color: #111;
-            font-size: 1.2em;
-        }
-        .grupo-input {
-            margin-bottom: 15px;
-            text-align: left;
-        }
-        .grupo-input label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-            font-size: 0.9em;
-        }
-        .grupo-input input {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 1em;
-            box-sizing: border-box;
-        }
-        .btn-enviar-pedido {
-            width: 100%;
-            padding: 12px;
-            background: #0088cc; /* Color oficial Telegram */
-            color: white;
-            border: none;
-            font-size: 1.1em;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: background 0.2s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .btn-enviar-pedido:hover {
-            background: #0077b3;
-        }
     </style>
 </head>
 
@@ -295,19 +247,6 @@
         Envíos a todo el país<br>
         Efectivo · Transferencia · Mercado Pago
     </p>
-
-    <div class="formulario-pedido">
-        <h4>📦 Realizar Pedido</h4>
-        <div class="grupo-input">
-            <label for="nombre-usuario">Tu Nombre:</label>
-            <input type="text" id="nombre-usuario" placeholder="Ej: Juan Pérez">
-        </div>
-        <div class="grupo-input">
-            <label for="ubi-usuario">Ubicación / Dirección de envío:</label>
-            <input type="text" id="ubi-usuario" placeholder="Ej: Calle Falsa 123, Caseros">
-        </div>
-        <button class="btn-enviar-pedido" onclick="enviarPedidoATelegram()">Confirmar y Enviar Ubicación</button>
-    </div>
 </div>
 
 <a class="btn-volver" href="/ValtorOFC/">← Volver al catálogo</a>
@@ -418,49 +357,6 @@
         galeria.scrollLeft = tamañoSetOriginal;
         actualizarImagenActiva();
     });
-
-    // --- FUNCIÓN COMPROBADA PARA ENVIAR A TELEGRAM ---
-    async function enviarPedidoATelegram() {
-        const nombre = document.getElementById("nombre-usuario").value.trim();
-        const ubicacion = document.getElementById("ubi-usuario").value.trim();
-
-        if (nombre === "" || ubicacion === "") {
-            alert("Por favor, completa tu nombre y ubicación antes de enviar.");
-            return;
-        }
-
-        // Credenciales oficiales sin espacios y verificadas
-        // Tus credenciales seguras
-        const TELEGRAM_TOKEN = "8898585400:AAGu6TTVAem3n6OoPApw2zluigyI0ZjVTwI";
-        const CHAT_ID = "6898992772";
-
-
-        const mensaje = `🛍️ **¡NUEVO PEDIDO RECIBIDO!**\n\n👤 **Cliente:** ${nombre}\n📍 **Ubicación:** ${ubicacion}`;
-        const url = `https://api.telegram.org/bot${TELEGRAM_TOKEN}/sendMessage`;
-
-        try {
-            const respuesta = await fetch(url, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    chat_id: CHAT_ID,
-                    text: mensaje,
-                    parse_mode: "Markdown"
-                })
-            });
-
-            if (respuesta.ok) {
-                alert("¡Pedido y ubicación enviados con éxito!");
-                document.getElementById("nombre-usuario").value = "";
-                document.getElementById("ubi-usuario").value = "";
-            } else {
-                alert("Hubo un problema al enviar al bot. Asegúrate de que la página se haya actualizado en GitHub.");
-            }
-        } catch (error) {
-            console.error("Error:", error);
-            alert("Error de conexión al intentar enviar el pedido.");
-        }
-    }
 </script>
 
 </body>
